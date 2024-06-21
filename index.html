@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Introvert Manga Site</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+        .read-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .chapter-list {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .chapter-list a {
+            display: block;
+            margin: 5px 0;
+        }
+        .manga-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .manga-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .manga-item img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .manga-item h3 {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .pagination {
+            margin: 20px 0;
+        }
+        .pagination button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .pagination button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to Introvert Manga Site</h1>
+        </header>
+        
+        <section id="manga-section">
+            <h2>Manga</h2>
+            <div id="manga-grid" class="manga-grid">
+                <!-- Manga items will be inserted here dynamically -->
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- Pagination buttons will be inserted here dynamically -->
+            </div>
+        </section>
+        
+        <aside id="ads-section">
+            <h2>Advertisement</h2>
+            <!-- Insert your ad code here -->
+            <p>This space is reserved for ads.</p>
+        </aside>
+        
+        <footer>
+            <p>&copy; 2024 Introvert Manga Site. All rights reserved.</p>
+        </footer>
+    </div>
+    <script>
+        const mangaCollections = [
+            {
+                title: "grand blue",
+                cover: "viber_image_2024-06-17_19-13-45-382.jpg",
+                chapters: [
+                    { name: "Chapter 22", link: "https://drive.google.com/file/d/1-i-fxU0SwTF81gCcG89GHzBCWxetsnoI/view?usp=drivesdk" },
+                    { name: "Chapter 23", link: "https://drive.google.com/file/d/1-l6MOoIFZYqsOYPMcplgEkLKDRMi5xqG/view?usp=drivesdk" },
+                    { name: "Chapter 24", link: "https://drive.google.com/file/d/1-wHH5VGKgkV3mZgRf90abASLTOWwLNEQ/view?usp=drivesdk" },
+                    { name: "Chapter 25", link: "https://drive.google.com/file/d/1-wHH5VGKgkV3mZgRf90abASLTOWwLNEQ/view?usp=drivesdk" }
+                ]
+            },
+            {
+                title: "kaguya sama love is war",
+                cover: "viber_image_2024-06-17_20-51-12-070.jpg",
+                chapters: [
+                    { name: "Chapter 1", link: "coming soon still working" },
+                    { name: "Chapter 2", link: "coming soon" },
+                ]
+            },
+            // Add more manga collections as needed
+        ];
+
+        const itemsPerPage = 4; // Number of manga items per page
+        let currentPage = 1;
+
+        function renderMangaGrid() {
+            const mangaGrid = document.getElementById('manga-grid');
+            mangaGrid.innerHTML = ''; // Clear previous content
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = mangaCollections.slice(start, end);
+
+            pageItems.forEach(manga => {
+                const mangaItem = document.createElement('div');
+                mangaItem.classList.add('manga-item');
+
+                mangaItem.innerHTML = `
+                    <img src="${manga.cover}" alt="${manga.title} Cover">
+                    <h3>${manga.title}</h3>
+                    <div class="read-button" onclick="showChapters('${manga.title}')">Read Manga</div>
+                    <div id="${manga.title}" class="chapter-list">
+                        <h3>Chapters</h3>
+                        ${manga.chapters.map(chapter => `<a href="${chapter.link}" target="_blank">${chapter.name}</a>`).join('')}
+                    </div>
+                `;
+
+                mangaGrid.appendChild(mangaItem);
+            });
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = ''; // Clear previous content
+
+            const totalPages = Math.ceil(mangaCollections.length / itemsPerPage);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+                button.addEventListener('click', () => {
+                    currentPage = i;
+                    renderMangaGrid();
+                    renderPagination();
+                });
+
+                pagination.appendChild(button);
+            }
+        }
+
+        function showChapters(id) {
+            const chapterList = document.getElementById(id);
+            if (chapterList.style.display === 'none' || chapterList.style.display === '') {
+                chapterList.style.display = 'block';
+            } else {
+                chapterList.style.display = 'none';
+            }
+        }
+
+        // Initial render
+        renderMangaGrid();
+        renderPagination();
+    </script>
+</body>
+</html>
